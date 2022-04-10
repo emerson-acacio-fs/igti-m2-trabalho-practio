@@ -30,7 +30,7 @@ export const theme = {
     lightBg: '#F2F2F2',
     black: '#030517',
     lightGray: '#EAEAEA',
-    gray: '#8F8F8F',
+    gray: '#DCDCDC',
     darkGray: '#2E2F42',
     red: '#FF6347',
   },

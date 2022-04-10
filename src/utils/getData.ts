@@ -5,20 +5,24 @@ type Investment = {
   id: string;
   description: string;
 };
-type Report = {
+export type Report = {
   id: string;
   investmentId: string;
   month: number;
   year: number;
   value: number;
-  percentage?: number;
 };
 
+export type ReportWithPercentage = {
+  percentage: number;
+} & Report;
+
 export type InvestmentWithReports = {
-  reports: Report[];
-  totalIncome?: number | undefined;
-  totalIncomePercentage?: number;
+  reports: ReportWithPercentage[];
+  totalIncome: number;
+  totalIncomePercentage: number;
 } & Investment;
+
 export type Data = { investments: Investment[]; reports: Report[] };
 
 export async function getData(
@@ -28,7 +32,7 @@ export async function getData(
     const data = await fetch('static/investments-2-1-2-2.json');
     const json: Data = await data.json();
     const newData = json.investments.map((investment) => {
-      const newInvest: InvestmentWithReports = {
+      const newInvest = {
         ...investment,
         reports: _.sortBy(
           json.reports.filter(
@@ -38,22 +42,27 @@ export async function getData(
         ),
       };
       const firstValue = Number(_.first(newInvest.reports)?.value);
-      newInvest.totalIncome =
-        Number(_.last(newInvest.reports)?.value) - firstValue;
-      newInvest.totalIncomePercentage =
-        (newInvest.totalIncome / firstValue) * 100;
+      const totalIncome = Number(_.last(newInvest.reports)?.value) - firstValue;
+      const totalIncomePercentage = (totalIncome / firstValue) * 100;
 
-      if (newInvest.reports.length) {
-        newInvest.reports[0].percentage = 0;
-        for (let i = 1; i < newInvest.reports.length; i += 1) {
-          newInvest.reports[i].percentage = Math.round(
-            ((newInvest.reports[i].value - newInvest.reports[i - 1].value) /
-              newInvest.reports[i - 1].value) *
-              100,
-          );
-        }
-      }
-      return newInvest;
+      const finalInvest: InvestmentWithReports = {
+        id: newInvest.id,
+        description: newInvest.description,
+        totalIncomePercentage,
+        totalIncome,
+        reports: [
+          { ...newInvest.reports[0], percentage: 0 },
+          ...newInvest.reports.slice(1).map((report, i) => {
+            const percentage =
+              ((report.value - newInvest.reports[i].value) /
+                newInvest.reports[i].value) *
+              100;
+            return { ...report, percentage };
+          }),
+        ],
+      };
+
+      return finalInvest;
     });
 
     setData(newData);

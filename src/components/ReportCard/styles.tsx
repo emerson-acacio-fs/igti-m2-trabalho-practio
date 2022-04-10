@@ -1,5 +1,9 @@
 import styled, { css } from 'styled-components';
 
+type WrapperProps = {
+  isRed: boolean;
+};
+
 export const Wrapper = styled.li`
   ${({ theme }) => css`
     border: 0.1rem solid ${theme.colors.gray};
@@ -21,11 +25,12 @@ export const Title = styled.div`
     `}
 `;
 
-export const TotalIncome = styled.div`
-  ${({ theme }) =>
+export const TotalIncome = styled.div<WrapperProps>`
+  ${({ theme, isRed }) =>
     css`
       font-size: ${theme.font.sizes.small};
       text-align: center;
+      color: ${isRed ? 'red' : 'green'};
     `}
 `;
 

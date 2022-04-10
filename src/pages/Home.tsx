@@ -3,9 +3,9 @@ import { ReportCard } from 'components/ReportCard';
 import { ReportsWrapper } from 'components/ReportsWrapper';
 import { useDataFromAPI } from 'hooks/useDataFromAPI';
 
-type HomeProps = { version?: string };
+type HomeProps = { version?: string | undefined };
 
-export function Home({ version }: HomeProps): JSX.Element {
+export function Home({ version = '1.0.1' }: HomeProps): JSX.Element {
   const data = useDataFromAPI();
 
   return (
@@ -18,17 +18,10 @@ export function Home({ version }: HomeProps): JSX.Element {
             title={investment.description}
             totalIncome={investment.totalIncome}
             totalIncomePercentage={investment.totalIncomePercentage}
-          >
-            {investment.reports.map((report) => (
-              <li
-                key={report.id}
-              >{`${report.month}/${report.year} --- ${report.value} ---  ${report.percentage}`}</li>
-            ))}
-          </ReportCard>
+            reports={investment.reports}
+          />
         ))}
       </ReportsWrapper>
     </>
   );
 }
-
-Home.defaultProps = { version: '1.0.1' };
