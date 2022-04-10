@@ -23,7 +23,7 @@ export const theme = {
     },
   },
   colors: {
-    primary: '#F231A5',
+    primary: '#87CEFA',
     secondary: '#3CD3C1',
     mainBg: '#06092B',
     white: '#FAFAFA',
